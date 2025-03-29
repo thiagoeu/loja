@@ -1,0 +1,50 @@
+# Dependências do Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs e diretórios de runtime
+logs/
+*.log
+.pnpm-debug.log*
+
+# Diretórios de build/compilação
+dist/
+build/
+.out/
+.next/
+
+# Configurações do IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Arquivos de configuração local
+*.local
+
+# Arquivos do sistema
+Thumbs.db
+
+# Arquivos do npm/yarn
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Arquivos de cache
+.cache/
+
+# Diretórios de testes/coverage
+coverage/
+.nyc_output/
+
+# Configurações do nodemon (se necessário)
+nodemon.json
