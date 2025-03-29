@@ -18,16 +18,16 @@ const addressSchema = new mongoose.Schema(
     country: {
       type: String,
     },
-    zip_code: {
+    pincode: {
       type: String,
     },
 
     status: {
-      type: String,
+      type: Boolean,
       default: true,
     },
 
-    user_id: {
+    userId: {
       type: mongoose.Schema.ObjectId,
       default: "",
     },
