@@ -9,6 +9,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 
 import connectDB from "./config/connectDB.js"; // Import the connectDB function
+import userRouter from "./routes/user.route.js";
 
 const app = express();
 app.use(
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello from the server!" });
 });
 
+app.use("/api/user", userRouter);
 // CONNECT TO MONGODB AND THEN START THE SERVER
 
 connectDB().then(() => {
