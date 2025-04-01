@@ -1,5 +1,7 @@
 // Importa a função para conectar ao MongoDB
 import connectDB from "./config/connectDB.js";
+import dotenv from "dotenv"; // Importa a biblioteca dotenv para carregar variáveis de ambiente
+dotenv.config(); // Carrega as variáveis de ambiente do arquivo .env
 
 // Importa as rotas do usuário
 import userRouter from "./routes/user.route.js";
@@ -17,16 +19,15 @@ const app = express();
 // Configura o middleware CORS para permitir requisições do frontend
 app.use(
   cors({
-    credentials: true, // Permite envio de cookies e autenticação entre domínios
     origin: process.env.FRONTEND_URL, // Define qual URL pode acessar a API
+    credentials: true, // Permite envio de cookies e autenticação entre domínios
   })
 );
+// Middleware para lidar com cookies nas requisições
+app.use(cookieParser());
 
 // Middleware para interpretar requisições com corpo em JSON
 app.use(express.json());
-
-// Middleware para lidar com cookies nas requisições
-app.use(cookieParser());
 
 // Middleware para registrar logs das requisições no console
 app.use(morgan("dev"));

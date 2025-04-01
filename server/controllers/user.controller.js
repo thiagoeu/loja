@@ -212,7 +212,7 @@ export async function loginController(req, res) {
 export async function logoutController(req, res) {
   try {
     // Obtém o ID do usuário autenticado
-    const userId = req.userId;
+    // const userId = req.userId;
 
     // Configurações para limpar os cookies
     const cookieOptions = {
@@ -225,7 +225,8 @@ export async function logoutController(req, res) {
     res.clearCookie("accessToken", cookieOptions);
     res.clearCookie("refreshToken", cookieOptions);
 
-    // (Opcional) Remover o token de atualização do banco de dados
+    // (Opcional)
+    // Remover o token de atualização do banco de dados
     // const removeRefreshToken = await UserModel.findByIdAndUpdate(
     //   userId,
     //   { refresh_token: "" }
