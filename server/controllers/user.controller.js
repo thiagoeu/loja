@@ -13,6 +13,7 @@ import verifyEmailTemplate from "./../utils/verifyEmailTemplate.js";
 // Importa funções para gerar tokens de acesso e atualização
 import generatedAccessToken from "../utils/generatedAccessToken.js";
 import generatedRefreshToken from "../utils/generatedRefreshToken.js";
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 
 // Importa dotenv para carregar variáveis de ambiente
 import dotenv from "dotenv";
@@ -238,6 +239,36 @@ export async function logoutController(req, res) {
     });
   } catch (error) {
     // Retorna erro interno do servidor
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
+
+export async function uploadAvatar(req, res) {
+  try {
+    const userId = req.userId;
+    const image = req.file; // A imagem deve ser enviada como um arquivo no corpo da requisição
+
+    const upload = await uploadImageCloudinary(image); // Faz o upload da imagem para o Cloudinary
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { avatar: upload.url } // Atualiza o campo avatar com o caminho da imagem
+    );
+
+    return res.json({
+      message: "Avatar uploaded successfully",
+      success: true,
+      error: false,
+      data: {
+        _id: userId,
+        avatar: upload.url, // Retorna o caminho da imagem
+      },
+    });
+  } catch (error) {
     return res.status(500).json({
       message: error.message || error,
       error: true,
