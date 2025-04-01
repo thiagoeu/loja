@@ -4,6 +4,13 @@ import connectDB from "./config/connectDB.js";
 // Importa as rotas do usuário
 import userRouter from "./routes/user.route.js";
 
+import express from "express"; // Importa o framework Express
+
+import cors from "cors"; // Importa o middleware CORS para controle de acesso
+import cookieParser from "cookie-parser"; // Importa o middleware para lidar com cookies
+import morgan from "morgan"; // Importa o middleware para registrar logs das requisições
+import helmet from "helmet"; // Importa o middleware para segurança HTTP
+
 // Cria a instância do aplicativo Express
 const app = express();
 
@@ -22,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Middleware para registrar logs das requisições no console
-app.use(morgan());
+app.use(morgan("dev"));
 
 // Middleware de segurança que adiciona cabeçalhos HTTP para proteção contra ataques
 app.use(
