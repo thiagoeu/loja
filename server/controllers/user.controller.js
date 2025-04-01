@@ -276,3 +276,40 @@ export async function uploadAvatar(req, res) {
     });
   }
 }
+
+export async function updateUserDetails(req, res) {
+  try {
+    const userId = req.userId;
+    const { name, email, phone, password } = req.body; // Obtém os dados do corpo da requisição
+
+    let hashPassword = ""; // Inicializa a variável hashPassword
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10); // Gera um salt para o hash
+      hashPassword = await bcrypt.hash(password, salt); // Faz o hash da senha
+    }
+
+    const updateUser = await UserModel.updateOne(
+      { _id: userId },
+      {
+        ...(name && { name: name }), // Atualiza o nome se fornecido
+        ...(email && { email: email }), // Atualiza o nome se fornecido
+        ...(phone && { phone: phone }), // Atualiza o nome se fornecido
+        ...(password && { password: hashPassword }), // Atualiza o nome se fornecido
+      }
+    );
+
+    return res.json({
+      message: "UPDATE SUCESS",
+      error: false,
+      success: true,
+      data: updateUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}

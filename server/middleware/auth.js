@@ -5,7 +5,7 @@ const auth = async (req, res, next) => {
     const token =
       req.cookies.accessToken || req?.headers?.authorization?.split(" ")[1];
     // Obtém o token do cookie ou do header de autorização
-    console.log(token); // Loga o token para depuração
+
     if (!token) {
       return res.status(401).json({
         message: "Unauthorized - No token provided",
