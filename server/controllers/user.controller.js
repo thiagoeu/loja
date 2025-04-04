@@ -433,3 +433,58 @@ export async function verifyForgotPasswordOtpController(req, res) {
     });
   }
 }
+
+export async function resetPasswordController(req, res) {
+  try {
+    const { email, newPassword, confirmPassword } = req.body; // Obtem os dados do corpo da requisição
+
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "All fields are required",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Procura o usuário no banco de dados com base no email fornecido
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Email not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "Password and confirm password do not match",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Atualiza a senha do usuário no banco de dados
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt); // Hash da senha
+    const updatePassword = await UserModel.findByIdAndUpdate(
+      user?._id,
+      {
+        password: hashedPassword,
+      } // Atualiza a senha e o OTP no banco de dados
+    );
+
+    res.json({
+      message: "Password reset successfully",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
