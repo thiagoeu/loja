@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
     ],
 
     forgot_password_otp: {
-      type: mongoose.Schema.ObjectId,
+      type: String,
       default: null,
     },
     forgot_password_otp_expiry: {

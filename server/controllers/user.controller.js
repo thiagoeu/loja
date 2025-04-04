@@ -15,10 +15,13 @@ import generatedAccessToken from "../utils/generatedAccessToken.js";
 import generatedRefreshToken from "../utils/generatedRefreshToken.js";
 import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 import generateOtp from "../utils/generateOtp.js";
+import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
 
 // Importa dotenv para carregar variáveis de ambiente
 import dotenv from "dotenv";
 dotenv.config();
+
+import jwt from "jsonwebtoken";
 
 // Controller para registrar um novo usuário
 export async function registerUserController(req, res) {
@@ -334,10 +337,29 @@ export async function forgotPasswordController(req, res) {
     const otp = generateOtp(); // Gera um OTP aleatório
     const expireTimeOtp = new Date(Date.now() + 10 * 60 * 1000); // Define o tempo de expiração do OTP (10 minutos)
 
-    const updateOtp = await UserModel.updateOne(
+    const updateOtp = await UserModel.findByIdAndUpdate(
       user._id,
-      { otp: otp, otpExpireTime: expireTimeOtp } // Atualiza o OTP e o tempo de expiração no banco de dados
+      {
+        forgot_password_otp: otp,
+        forgot_password_otp_expiry: new Date(expireTimeOtp).toISOString(),
+      } // Atualiza o OTP e o tempo de expiração no banco de dados
     );
+
+    // Envia o OTP para o email do usuário
+    await sendEmail({
+      sendTo: email,
+      subject: "forgot password",
+      html: forgotPasswordTemplate({
+        name: user.name,
+        otp: otp,
+      }),
+    });
+
+    return res.json({
+      message: "OTP sent successfully verify your email",
+      error: false,
+      success: true,
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
