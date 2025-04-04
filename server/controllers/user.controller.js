@@ -368,3 +368,68 @@ export async function forgotPasswordController(req, res) {
     });
   }
 }
+
+export async function verifyForgotPasswordOtpController(req, res) {
+  try {
+    const { email, otp } = req.body; // Obtém o email e o OTP do corpo da requisição
+
+    // Se o usuário nao for encontrado, retorna erro
+    if (!email || !otp) {
+      return res.status(404).json({
+        message: "Email not found or otp not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Procura o usuário no banco de dados com base no email fornecido
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Email not found",
+        error: true,
+        success: false,
+      });
+    }
+    const currentDate = new Date().toISOString(); // Obtem a data e hora atual
+
+    // Verifica se o OTP fornecido expirou
+    if (user.forgot_password_otp_expiry < currentDate) {
+      return res.status(400).json({
+        message: "OTP expired",
+        error: true,
+        success: false,
+      });
+    }
+    // Verifica se o OTP fornecido é valido
+    if (user.forgot_password_otp !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Atualiza o OTP e o tempo de expiração no banco de dados
+    const updateOtp = await UserModel.findByIdAndUpdate(
+      user?._id,
+      {
+        forgot_password_otp: "",
+        forgot_password_otp_expiry: "",
+      } // Atualiza o OTP e o tempo de expiração no banco de dados
+    );
+
+    return res.json({
+      message: "OTP verified successfully",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
