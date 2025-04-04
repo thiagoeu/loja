@@ -14,6 +14,7 @@ import verifyEmailTemplate from "./../utils/verifyEmailTemplate.js";
 import generatedAccessToken from "../utils/generatedAccessToken.js";
 import generatedRefreshToken from "../utils/generatedRefreshToken.js";
 import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
+import generateOtp from "../utils/generateOtp.js";
 
 // Importa dotenv para carregar variáveis de ambiente
 import dotenv from "dotenv";
@@ -305,6 +306,38 @@ export async function updateUserDetails(req, res) {
       success: true,
       data: updateUser,
     });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
+
+export async function forgotPasswordController(req, res) {
+  try {
+    const { email } = req.body; // Obtém o email do corpo da requisição
+
+    // Procura o usuário no banco de dados com base no email fornecido
+    const user = await UserModel.findOne({ email: email });
+
+    // Se o usuário nao for encontrado, retorna erro
+    if (!user) {
+      return res.status(404).json({
+        message: "Email not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    const otp = generateOtp(); // Gera um OTP aleatório
+    const expireTimeOtp = new Date(Date.now() + 10 * 60 * 1000); // Define o tempo de expiração do OTP (10 minutos)
+
+    const updateOtp = await UserModel.updateOne(
+      user._id,
+      { otp: otp, otpExpireTime: expireTimeOtp } // Atualiza o OTP e o tempo de expiração no banco de dados
+    );
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
