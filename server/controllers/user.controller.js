@@ -488,3 +488,59 @@ export async function resetPasswordController(req, res) {
     });
   }
 }
+
+export async function refreshTokenController(req, res) {
+  try {
+    const refreshToken =
+      req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1]; // Obtém o refresh token do cookie ou do cabeçalho da requisição
+    console.log(refreshToken);
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: "Refresh token not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    const verifyToken = await jwt.verify(
+      refreshToken,
+      process.env.JWT_SECRET_REFRESH
+    ); // Verifica o refresh token
+
+    if (!verifyToken) {
+      return res.status(401).json({
+        message: "Invalid refresh token",
+        error: true,
+        success: false,
+      });
+    }
+
+    const userId = verifyToken?.id; // Procura o usuário no banco de dados com base no ID fornecido
+
+    const newAccessToken = await generatedAccessToken(userId); // Gera um novo access token
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
+
+    res.cookie("accessToken", newAccessToken, cookieOptions);
+
+    return res.json({
+      message: "Token refreshed successfully",
+      error: false,
+      success: true,
+      data: {
+        accessToken: newAccessToken,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
