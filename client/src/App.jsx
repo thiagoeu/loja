@@ -1,11 +1,16 @@
+import { Outlet } from "react-router-dom";
 import "./App.css";
+import Header from "./componentes/Header";
+import Footer from "./componentes/Footer";
 
 function App() {
   return (
     <>
-      <div className="text-center text-3xl font-bold text-blue-500">
-        Frontend2
-      </div>
+      <Header />
+      <main className="min-h-[85vh]">
+        <Outlet />
+      </main>
+      <Footer />
     </>
   );
 }
