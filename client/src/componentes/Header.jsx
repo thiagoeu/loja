@@ -1,12 +1,14 @@
 import React from "react";
 import logo from "../assets/logo.png";
+import Search from "./Search";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <header className="h-20 shadow-md sticky top-0">
       <div className="container flex mx-auto  items-center h-full px-2 justify-between">
         <div className="h-full">
-          <div className="h-full flex justify-center items-center">
+          <Link to="/" className="h-full flex justify-center items-center">
             <img
               src={logo}
               width={90}
@@ -21,9 +23,11 @@ const Header = () => {
               alt="logo"
               className="lg:hidden"
             />
-          </div>
+          </Link>
         </div>
-        <div>Pesquisar</div>
+        <div>
+          <Search />
+        </div>
         <div>Carrinho</div>
       </div>
     </header>
