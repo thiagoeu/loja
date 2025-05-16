@@ -3,11 +3,13 @@ import { IoSearch } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { TypeAnimation } from "react-type-animation";
 import { FaArrowLeft } from "react-icons/fa";
+import useMobile from "../hooks/useMobile";
 
 const Search = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSearchPage, setIsSearchPage] = useState(false);
+  const [isMobile] = useMobile();
   const params = useLocation();
   const searchText = params.search.slice(3);
 
@@ -23,7 +25,7 @@ const Search = () => {
   return (
     <div className="w-full  min-w-[300px] lg:min-w-[420px] h-11 lg:h-12 rounded-lg border overflow-hidden flex items-center text-neutral-500 bg-slate-50 group focus-within:border-primary-200 ">
       <div>
-        {isSearchPage ? (
+        {isMobile && !isSearchPage ? (
           <Link
             to={"/"}
             className="flex justify-center items-center h-full p-2 m-1 group-focus-within:text-primary-200 bg-white rounded-full shadow-md"
